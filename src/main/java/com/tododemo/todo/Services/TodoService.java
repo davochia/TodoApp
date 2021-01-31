@@ -12,6 +12,6 @@ public interface TodoService {
     List<TodoDTO> findByName(String name);
     TodoDTO editTodo(UUID id, TodoDTO todoDTO);
     boolean deleteTodo(UUID id);
-    //List<TodoDTO> dateTodoPass();
+    void toggleIsComplete();
 
 }

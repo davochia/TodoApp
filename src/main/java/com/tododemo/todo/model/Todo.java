@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -27,9 +27,9 @@ public class Todo {
     private String description;
 
     @ApiModelProperty(notes="End date ")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @ApiModelProperty(notes="Return true or false if todo dateTime equals to current dateTime ")
-    private Boolean complete;
+    private Boolean isComplete;
 
 }

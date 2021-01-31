@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public class TodoServiceImpl implements TodoService{
 
     @Override
     public TodoDTO addTodos(TodoDTO todoDTO) {
-        LocalDateTime nowDate = LocalDateTime.now();
+        LocalDate nowDate = LocalDate.now();
         if (todoDTO == null || todoDTO.getEndDate().isBefore(nowDate))return null;
         Todo todo = TodoDTO.getTodo(todoDTO);
         return TodoDTO.getTodoDTO(todoRepository.save(todo));
@@ -33,6 +33,7 @@ public class TodoServiceImpl implements TodoService{
         delayResponse();
         List<Todo> todos = todoRepository.findAll();
         if (todos.isEmpty())return null;
+
         List<TodoDTO> todosDTO = new ArrayList<>();
         todos.forEach(todo -> todosDTO.add(TodoDTO.getTodoDTO(todo)));
         return todosDTO;
@@ -43,6 +44,7 @@ public class TodoServiceImpl implements TodoService{
     public List<TodoDTO> findByName(String name) {
         delayResponse() ;
         if(name.isEmpty())return null;
+
         List<TodoDTO> todosDTO = new ArrayList<>();
         todoRepository.findAll().forEach(todo -> {
             if (todo.getTodoName().equals(name)){
@@ -55,7 +57,7 @@ public class TodoServiceImpl implements TodoService{
 
     @Override
     public TodoDTO editTodo(UUID id, TodoDTO todoDTO) {
-        LocalDateTime nowDate = LocalDateTime.now();
+        LocalDate nowDate = LocalDate.now();
         Optional<Todo> optionalTodo = todoRepository.findById(id);
         if(optionalTodo.isEmpty() || todoDTO.getEndDate().isBefore(nowDate))return null;
 
@@ -64,7 +66,7 @@ public class TodoServiceImpl implements TodoService{
         todo.setTodoName(todoDTO.getTodoName());
         todo.setDescription(todoDTO.getDescription());
         todo.setEndDate(todoDTO.getEndDate());
-        todo.setComplete(todoDTO.getComplete());
+        todo.setIsComplete(todoDTO.getIsComplete());
         return TodoDTO.getTodoDTO(todoRepository.save(todo));
     }
 
@@ -76,18 +78,16 @@ public class TodoServiceImpl implements TodoService{
         return true;
     }
 
-//    @Override
-//    public List<TodoDTO> dateTodoPass(){
-//        List<TodoDTO> todosDto= new ArrayList<>();
-//        LocalDateTime nowDate = LocalDateTime.now();
-//
-//        todoRepository.findAll().forEach(todo -> {
-//            if (todo.getEndDate().isBefore(nowDate)){
-//                todosDto.add(TodoDTO.getTodoDTO(todo));
-//            }
-//        });
-//        return todosDto;
-//    }
+    @Override
+    public void toggleIsComplete(){
+        LocalDate nowDate = LocalDate.now();
+
+        todoRepository.findAll().forEach(todo -> {
+            if (todo.getEndDate().isBefore(nowDate)){
+                todo.setIsComplete(true);
+            }
+        });
+    }
 
 
     private void delayResponse(){
